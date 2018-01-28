@@ -1,0 +1,43 @@
+{
+  "name": "redux-full-socket-server",
+  "version": "0.0.1",
+  "description": "A server for redux-full-socket",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublish": "babel src --out-dir lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manufont/redux-full-socket-server.git"
+  },
+  "keywords": [
+    "redux",
+    "socket",
+    "websocket"
+  ],
+  "author": "Emmanuel Fonteneau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/manufont/redux-full-socket-server/issues"
+  },
+  "homepage": "https://github.com/manufont/redux-full-socket-server#readme",
+  "dependencies": {
+    "redis": "^2.8.0",
+    "redux": "^3.7.2",
+    "redux-persist": "^5.5.0",
+    "url": "^0.11.0",
+    "ws": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-2"
+    ]
+  }
+}
