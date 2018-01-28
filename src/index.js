@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { persistStore, autoRehydrate } from 'redux-persist'
+import { persistStore, persistReducer } from 'redux-persist'
 import WebSocket from 'ws';
 import url from 'url';
 
@@ -31,7 +31,7 @@ export const serverStoreEnhancer = (clientReducer, dbPrefix) => {
       initialState,
       compose(
         ...enhancer ? [enhancer] : [],
-        autoRehydrate()
+        persistReducer()
       )
     );
 
