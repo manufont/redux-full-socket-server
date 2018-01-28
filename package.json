@@ -24,7 +24,7 @@
   "dependencies": {
     "redis": "^2.8.0",
     "redux": "^3.7.2",
-    "redux-persist": "^5.5.0",
+    "redux-persist": "^4.10.1",
     "url": "^0.11.0",
     "ws": "^4.0.0"
   },
