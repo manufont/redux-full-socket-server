@@ -6,10 +6,10 @@ import url from 'url';
 import getRedisAsyncStorage from './redis';
 
 const dispatchToClient = reducer => (state = {}, action) => {
-  if(action.token){
+  if(action.channel){
     return {
       ...state,
-      [action.token]: reducer(state[action.token], action)
+      [action.channel]: reducer(state[action.channel], action)
     }
   }else{
     return state;
@@ -45,9 +45,9 @@ export const serverStoreEnhancer = (clientReducer, dbPrefix) => {
 }
 
 
-const init = (store, token) => ({
+const init = (store, channel) => ({
   type: 'INIT',
-  payload: store.getState().clients[token],
+  payload: store.getState().clients[channel],
   hide: true
 });
 
@@ -56,13 +56,13 @@ const cleanAction = action => ({
   ...action,
   hide: undefined,
   broadcast: undefined,
-  token: undefined,
+  channel: undefined,
   sync: undefined
 });
 
-const augmentAction = (action, token, socketId) => ({
+const augmentAction = (action, channel, socketId) => ({
   ...action,
-  token,
+  channel,
   socketId
 });
 
@@ -73,18 +73,18 @@ const id = () =>
 const startServer = (store, socketOptions) => {
   const socketServer = new WebSocket.Server(socketOptions);
 
-  const tokenMap = {};
+  const channelMap = {};
 
   socketServer.on('connection', (socket, request) => {
 
-    const token = url.parse(request.url, true).query.token;
+    const channel = url.parse(request.url, true).query.channel;
 
     const send = action => {
       const message = JSON.stringify(cleanAction(action));
       if(action.broadcast){
-        Object.keys(tokenMap[token]).forEach( key => {
+        Object.keys(channelMap[channel]).forEach( key => {
           if(action.sync || action.socketId !== key){
-            tokenMap[token][key].send(message)
+            channelMap[channel][key].send(message)
           }
         });
       }else if(action.sync){
@@ -93,17 +93,17 @@ const startServer = (store, socketOptions) => {
     }
 
     const socketId = id();
-    if(!tokenMap[token]) tokenMap[token] = {};
-    tokenMap[token][socketId] = socket;
-    socket.send(JSON.stringify(init(store, token)));
+    if(!channelMap[channel]) channelMap[channel] = {};
+    channelMap[channel][socketId] = socket;
+    socket.send(JSON.stringify(init(store, channel)));
 
     socket.on('message', message => {
-      const action = store.dispatch(augmentAction(JSON.parse(message), token, socketId));
+      const action = store.dispatch(augmentAction(JSON.parse(message), channel, socketId));
       send(action);
     });
 
     socket.on('close', () => {
-      delete tokenMap[token][socketId];
+      delete channelMap[channel][socketId];
     })
   });
 
